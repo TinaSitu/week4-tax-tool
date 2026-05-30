@@ -73,7 +73,23 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .export-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 .export-btn.primary:hover{background:#333}
 .disclaimer{font-size:11px;color:var(--muted);margin-top:1rem;padding:10px 12px;border:1px solid var(--border);border-radius:8px;line-height:1.6}
-@media(max-width:480px){.row{grid-template-columns:1fr}.summary-cards{grid-template-columns:1fr}}
+.db-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.db-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+.db-card.full{grid-column:1/-1}
+.db-card h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:1rem}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-label{font-size:12px;width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.bar-track{flex:1;height:10px;background:var(--bg);border-radius:5px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;border-radius:5px;transition:width 0.4s ease}
+.bar-amt{font-size:12px;font-weight:600;width:70px;text-align:right;flex-shrink:0}
+.donut-wrap{display:flex;align-items:center;gap:1.5rem}
+.donut-legend{flex:1;min-width:0}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.legend-pct{font-weight:600;color:var(--muted);font-size:11px}
+.db-empty{text-align:center;padding:2rem;color:var(--muted);font-size:13px}
+@media(max-width:480px){.row{grid-template-columns:1fr}.summary-cards{grid-template-columns:1fr}.db-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -82,6 +98,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <button class="nav-btn active" onclick="showPage('diary',this)">Daily Log</button>
   <button class="nav-btn" onclick="showPage('rental',this)">Rental</button>
   <button class="nav-btn" onclick="showPage('summary',this)">Tax Summary</button>
+  <button class="nav-btn" onclick="showPage('dashboard',this)">Dashboard</button>
 </div>
 
 <!-- DAILY LOG -->
@@ -219,6 +236,32 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <div class="disclaimer">⚠️ This tool does not provide tax advice. It helps organise records for tax return preparation. ATO requires records to be kept for 5 years. Consult a registered tax agent.</div>
 </div>
 
+<!-- DASHBOARD -->
+<div class="page" id="page-dashboard">
+  <div class="db-grid">
+    <div class="db-card full" id="db-bar-chart">
+      <h3>Spending by category</h3>
+      <div id="db-bars"><div class="db-empty">No expense data yet</div></div>
+    </div>
+    <div class="db-card full" id="db-donut-card">
+      <h3>Deductible vs personal vs income</h3>
+      <div class="donut-wrap">
+        <canvas id="db-donut" width="140" height="140" style="flex-shrink:0"></canvas>
+        <div class="donut-legend" id="db-legend"></div>
+      </div>
+    </div>
+    <div class="db-card">
+      <h3>Top expense this month</h3>
+      <div id="db-top-month" style="font-size:13px;color:var(--muted)">—</div>
+    </div>
+    <div class="db-card">
+      <h3>Deductible this FY</h3>
+      <div id="db-ded-total" style="font-size:26px;font-weight:700;color:var(--green)">$0.00</div>
+      <div id="db-ded-count" style="font-size:11px;color:var(--muted);margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const ICONS={D1_car:'🚗',D2_travel:'✈️',D3_clothing:'👔',D4_education:'📚',D5_other_work:'💼',D8_donations:'❤️',D9_tax_affairs:'📋',D12_super:'🏦',personal_food:'🍔',personal_transport:'🚌',personal_shopping:'🛍️',personal_health:'💊',personal_entertainment:'🎬',personal_bills:'📱',personal_other:'📌',salary:'💵',freelance:'💻',interest:'📈',other_income:'💰'};
 const DEDUCTIBLE=['D1_car','D2_travel','D3_clothing','D4_education','D5_other_work','D8_donations','D9_tax_affairs','D12_super'];
@@ -258,6 +301,7 @@ function showPage(p,btn){
   btn.classList.add('active');
   if(p==='summary')renderSummary();
   if(p==='rental')renderRental();
+  if(p==='dashboard')renderDashboard();
 }
 function initDates(){
   const t=new Date().toISOString().split('T')[0];
@@ -371,6 +415,80 @@ function exportCSV(){
 }
 function exportJSON(){dl(JSON.stringify({financial_year:getFY(),generated:new Date().toISOString(),disclaimer:'This tool does not provide tax advice.',entries:db.entries,rental:db.rental},null,2),`tax_diary_${getFY()}.json`,'application/json');}
 function dl(content,filename,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=filename;a.click();}
+
+function renderDashboard(){
+  const COLORS=['#4a90d9','#e67e22','#2ecc71','#e74c3c','#9b59b6','#1abc9c','#f39c12','#e91e63','#00bcd4','#8bc34a','#ff5722','#607d8b'];
+  const expenses=db.entries.filter(e=>e.type==='expense');
+  const catTotals={};
+  expenses.forEach(e=>{catTotals[e.category]=(catTotals[e.category]||0)+e.amount;});
+  const sorted=Object.entries(catTotals).sort((a,b)=>b[1]-a[1]);
+  const maxVal=sorted[0]?sorted[0][1]:1;
+
+  // Bar chart
+  const barsEl=document.getElementById('db-bars');
+  if(!sorted.length){barsEl.innerHTML='<div class="db-empty">No expense data yet — add some entries first</div>';}
+  else{
+    barsEl.innerHTML=sorted.map(([cat,amt],i)=>{
+      const pct=Math.round((amt/maxVal)*100);
+      const label=cat.replace(/_/g,' ');
+      const icon=ICONS[cat]||'📌';
+      return `<div class="bar-row">
+        <div class="bar-label">${icon} ${label}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${COLORS[i%COLORS.length]}"></div></div>
+        <div class="bar-amt">${fmt(amt)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Donut chart
+  const totalDed=db.entries.filter(e=>e.deductible).reduce((s,e)=>s+e.amount,0);
+  const totalPersonal=db.entries.filter(e=>e.type==='expense'&&!e.deductible).reduce((s,e)=>s+e.amount,0);
+  const totalIncome=db.entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const donutData=[
+    {label:'Tax deductible',val:totalDed,color:'#2ecc71'},
+    {label:'Personal expenses',val:totalPersonal,color:'#e74c3c'},
+    {label:'Income',val:totalIncome,color:'#4a90d9'},
+  ].filter(d=>d.val>0);
+  const total=donutData.reduce((s,d)=>s+d.val,0)||1;
+  const canvas=document.getElementById('db-donut');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,140,140);
+  let angle=-Math.PI/2;
+  if(donutData.length===0){
+    ctx.beginPath();ctx.arc(70,70,50,0,Math.PI*2);ctx.strokeStyle='#e5e3dc';ctx.lineWidth=20;ctx.stroke();
+  } else {
+    donutData.forEach(d=>{
+      const slice=(d.val/total)*Math.PI*2;
+      ctx.beginPath();ctx.moveTo(70,70);ctx.arc(70,70,55,angle,angle+slice);ctx.closePath();
+      ctx.fillStyle=d.color;ctx.fill();
+      angle+=slice;
+    });
+    ctx.beginPath();ctx.arc(70,70,35,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+    ctx.font='bold 13px sans-serif';ctx.fillStyle='#1a1a1a';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(fmt(total),70,70);
+  }
+  document.getElementById('db-legend').innerHTML=donutData.map(d=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${d.color}"></div>
+      <span class="legend-label">${d.label}</span>
+      <span class="legend-pct">${Math.round((d.val/total)*100)}%</span>
+    </div>`).join('')||'<div style="font-size:12px;color:#bbb">No data yet</div>';
+
+  // Top expense this month
+  const thisMonth=new Date().toISOString().slice(0,7);
+  const monthExp=db.entries.filter(e=>e.type==='expense'&&e.date.startsWith(thisMonth));
+  if(monthExp.length){
+    const top=monthExp.sort((a,b)=>b.amount-a.amount)[0];
+    document.getElementById('db-top-month').innerHTML=`<div style="font-size:16px;font-weight:700">${ICONS[top.category]||'💸'} ${top.description}</div><div style="font-size:13px;color:var(--red);margin-top:4px">${fmt(top.amount)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${top.date} · ${top.category.replace(/_/g,' ')}</div>`;
+  } else {
+    document.getElementById('db-top-month').innerHTML='<span style="color:#bbb">No expenses this month</span>';
+  }
+
+  // Deductible total
+  const dedCount=db.entries.filter(e=>e.deductible).length;
+  document.getElementById('db-ded-total').textContent=fmt(totalDed);
+  document.getElementById('db-ded-count').textContent=`${dedCount} deductible entr${dedCount===1?'y':'ies'} recorded`;
+}
 
 initDates();renderEntries();renderRental();updateTotals();
 </script>
