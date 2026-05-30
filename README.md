@@ -1,98 +1,91 @@
-# 🇦🇺 AUS Personal Tax & Finance Prep Tool
+# 💰 My Tax Diary — AUS Personal Tax & Finance Prep Tool
 
 > **This tool does not provide tax advice. It helps organise records for tax return preparation.**
+
+🌐 **Live web app:** https://tinasitu.github.io/week4-tax-tool
 
 ---
 
 ## What is this?
 
-A Python CLI tool that helps PAYG employees with investment properties organise their tax records before visiting a tax agent or filing through myTax. It mirrors the structure of the ATO's Individual Income Tax Return (IITR) and Rental Schedule.
+A daily expense and income tracker for Australian PAYG employees with investment properties. Record every transaction throughout the year — the tool automatically categorises what's tax-deductible and what's not, so when tax time comes, everything is already organised.
 
-**Solves a real problem:** Every year I spend hours hunting through bank statements, invoices, and emails to pull together numbers for my tax return. This tool provides one place to record everything throughout the year — structured exactly how the ATO wants it.
+**Solves a real problem:** Every year I spend hours hunting through bank statements and receipts to prepare for my tax return. This tool lets me record expenses as they happen, already mapped to ATO categories, so lodgement is fast.
 
 ---
 
 ## Who is it for?
 
-- Australian residents who earn **PAYG salary/wages** (one or more employers)
-- People who also have an **investment property** (rental income + expenses)
-- Anyone who wants to **stay organised** with deductions throughout the year
+- Australian residents earning **PAYG salary/wages**
+- People with an **investment property** (rental income + expenses)
+- Anyone who wants to stay on top of **tax deductions** throughout the year
 
 ---
 
-## Features
+## How to use
 
-| Section | ATO Reference | What it tracks |
+### Option 1 — Web app (recommended)
+Open https://tinasitu.github.io/week4-tax-tool in any browser. No installation needed. Data saves automatically in your browser.
+
+**Three tabs:**
+- **Daily Log** — record any expense or income, auto-tagged as deductible or personal
+- **Rental** — record rent received and all property expenses (14 ATO categories)
+- **Tax Summary** — full ATO breakdown, export CSV for your tax agent
+
+### Option 2 — Python CLI
+```bash
+python3 tax_prep.py
+```
+Requires Python 3.8+. No third-party packages needed.
+
+---
+
+## ATO categories covered
+
+| Section | ATO Reference | Details |
 |---|---|---|
-| PAYG Income | IITR Label 1, 12 | Gross income, tax withheld, super per employer |
-| Rental Schedule | IITR Item 20 | Gross rent, 17 ATO expense categories |
-| Deductions | IITR Labels D1–D15 | Work car, travel, clothing, education, donations, etc. |
-| Summary | All of above | Estimated taxable income, exportable CSV |
+| Work deductions | D1–D15 | Car, travel, clothing, education, donations, super, tax affairs |
+| Rental income | IITR Item 20 | Gross rent received |
+| Rental expenses | Item 20 | 14 categories: interest, agent fees, rates, insurance, repairs, depreciation, and more |
+| PAYG income | Label 1, 12 | Salary, tax withheld |
 
 ---
 
-## Technical requirements met
+## Technical requirements
 
 | Requirement | Where |
 |---|---|
-| ≥ 3 custom functions | `calculate_payg_summary()`, `calculate_rental_income()`, `calculate_deductions()`, `generate_tax_summary()`, `export_summary_csv()` |
-| Loop + conditional | `for emp in employers` / `if label in ato_deduction_labels` in every calculate function |
+| ≥ 3 custom functions | `calculate_payg_summary()`, `calculate_rental_income()`, `calculate_deductions()`, `generate_tax_summary()`, `export_summary_csv()` in `tax_prep.py` |
+| Loop + conditional | `for` loops + `if` checks in every calculate function |
 | Dictionary for data storage | `ato_deduction_labels`, `ato_expense_categories`, `options` menu dict |
-| try/except error handling | All calculate functions + `load_json()` + `save_json()` |
-| Save to local JSON + CSV | `save_json()` → `data/`, `export_summary_csv()` → `records/` |
-| Git branch development | See Git history — features developed on `feature/income`, `feature/rental`, `feature/deductions`, merged back to `main` |
+| try/except error handling | `load_json()`, `save_json()`, all calculate functions |
+| Save to local JSON + CSV | `data/` folder for JSON, `records/` for CSV exports |
+| Git branch development | `feature/income`, `feature/rental`, `feature/deductions` — all merged to `main` |
 
 ---
 
-## How to run
-
-### Prerequisites
-- Python 3.8 or higher
-- No third-party packages required (standard library only)
-
-### Steps
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/aus-tax-prep.git
-cd aus-tax-prep
-
-# 2. Run the tool
-python tax_prep.py
-
-# 3. Follow the menu prompts
-#    1. Add PAYG income
-#    2. Add rental property income/expenses
-#    3. Add deductions
-#    4. View & export summary (generates data/summary_YYYY-YY.json and records/summary_YYYY-YY.csv)
-```
-
-### File structure after use
+## File structure
 
 ```
-aus-tax-prep/
-├── tax_prep.py              # Main program
+week4-tax-tool/
+├── index.html          # Web app (Daily Log + Rental + Tax Summary)
+├── tax_prep.py         # Python CLI version
 ├── README.md
-├── data/                    # JSON records (auto-created)
-│   ├── income_2024-25.json
-│   ├── property_2024-25.json
-│   ├── deductions_2024-25.json
-│   └── summary_2024-25.json
-└── records/                 # CSV exports (auto-created)
-    └── summary_2024-25.csv
+├── .gitignore
+└── data/               # Sample JSON data (local use)
+    ├── income_2024-25_sample.json
+    ├── property_2024-25_sample.json
+    └── deductions_2024-25_sample.json
 ```
 
 ---
 
-## ATO compliance notes
+## ATO record-keeping reminder
 
-- **Record keeping**: ATO requires rental property records to be kept for **5 years** from the date you lodge your tax return. This tool reminds you of this requirement.
-- **Rental expenses**: All 17 ATO-recognised rental expense categories are included (per ATO Rental properties guide).
-- **Deductions**: Labels match ATO IITR deduction labels D1–D15.
-- **myDeductions compatibility**: Category structure mirrors ATO's myDeductions app for easy cross-reference.
+ATO requires rental property records to be kept for **5 years** from the date you lodge your return. Export your data regularly using the CSV export button.
 
 ---
 
 ## Disclaimer
 
-This tool does not provide tax advice. It helps organise records for tax return preparation. Always consult a registered tax agent or the ATO (ato.gov.au) for advice on your specific situation.
+This tool does not provide tax advice. It helps organise records for tax return preparation. Always consult a registered tax agent or visit [ato.gov.au](https://ato.gov.au) for advice on your specific situation.
