@@ -3,333 +3,376 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUS Tax Prep Tool</title>
+<title>My Tax Diary</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Courier New',monospace;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
-.container{max-width:700px;margin:0 auto}
-.header{margin-bottom:2rem}
-.header h1{font-size:18px;font-weight:700;letter-spacing:0.05em;margin-bottom:6px}
-.header .sub{font-size:12px;color:#666;letter-spacing:0.03em}
-.fy-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:4px;background:#e8e6e0;border:1px solid #ccc;margin-left:10px;vertical-align:middle}
-.disclaimer{font-size:11px;color:#888;margin-bottom:1.5rem;padding:8px 12px;border-left:3px solid #ccc;background:#fff}
-.tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid #1a1a1a}
-.tab{font-size:12px;padding:8px 16px;cursor:pointer;border:none;background:none;color:#888;letter-spacing:0.04em;font-family:'Courier New',monospace;border-bottom:3px solid transparent;margin-bottom:-2px}
-.tab.active{color:#1a1a1a;border-bottom:3px solid #1a1a1a;font-weight:700}
-.tab:hover:not(.active){color:#1a1a1a}
-.panel{display:none}.panel.active{display:block}
-.card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:1.25rem;margin-bottom:1rem}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.field-row.full{grid-template-columns:1fr}
-.field{display:flex;flex-direction:column;gap:5px}
-label{font-size:11px;color:#888;letter-spacing:0.05em;text-transform:uppercase}
-input,select{font-family:'Courier New',monospace;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:4px;background:#fafaf8;outline:none}
-input:focus,select:focus{border-color:#1a1a1a}
-.btn{font-family:'Courier New',monospace;font-size:12px;padding:8px 16px;border:1px solid #1a1a1a;border-radius:4px;background:#1a1a1a;color:#fff;cursor:pointer;letter-spacing:0.03em}
-.btn:hover{background:#333}
-.btn.outline{background:#fff;color:#1a1a1a}
-.btn.outline:hover{background:#f5f4f0}
-.btn.danger{border-color:#e24b4a;color:#e24b4a;background:#fff}
-.entry-list{margin-top:1rem}
-.entry{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid #e8e6e0;border-radius:4px;margin-bottom:6px;background:#fff}
-.entry-name{font-size:13px;font-weight:700}
-.entry-sub{font-size:11px;color:#888;margin-top:2px}
-.entry-amt{font-size:14px;font-weight:700;font-family:'Courier New',monospace}
-.entry-amt.neg{color:#e24b4a}
-.del-btn{background:none;border:1px solid #e8e6e0;border-radius:4px;cursor:pointer;color:#bbb;font-size:13px;padding:4px 8px}
-.del-btn:hover{color:#e24b4a;border-color:#e24b4a}
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem}
-.metric{padding:1rem;background:#fff;border:1px solid #ddd;border-radius:6px}
-.metric-label{font-size:10px;color:#888;margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase}
-.metric-value{font-size:22px;font-weight:700;font-family:'Courier New',monospace}
-.metric-value.neg{color:#e24b4a}
-.section-title{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#888;margin:1.25rem 0 0.5rem;padding-bottom:4px;border-bottom:1px solid #e8e6e0}
-.ato-row{display:flex;justify-content:space-between;padding:7px 0;font-size:12px;border-bottom:1px solid #f0ede8}
-.ato-key{color:#666;font-family:'Courier New',monospace}
-.ato-val{font-weight:700;font-family:'Courier New',monospace}
-.ato-val.neg{color:#e24b4a}
-.ato-row.total{font-weight:700;border-bottom:none;padding-top:10px}
-.export-row{display:flex;gap:8px;margin-top:1.5rem}
-.info-note{font-size:11px;color:#888;margin-top:1rem;padding:10px 12px;border:1px solid #e8e6e0;border-radius:4px;background:#fafaf8;line-height:1.6}
-.empty{text-align:center;padding:2rem;color:#bbb;font-size:12px;border:1px dashed #ddd;border-radius:4px;margin-top:1rem}
-.indent{padding-left:16px;font-size:11px}
-@media(max-width:500px){.field-row{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr}}
+:root{--bg:#f7f6f2;--card:#fff;--border:#e5e3dc;--text:#1a1a1a;--muted:#888;--accent:#1a1a1a;--green:#2d7d46;--red:#c0392b;--tag-bg:#f0ede6}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 1rem;display:flex;align-items:center;position:sticky;top:0;z-index:100}
+.logo{font-weight:700;font-size:15px;padding:14px 16px 14px 0;border-right:1px solid var(--border);margin-right:4px}
+.nav-btn{padding:14px 14px;font-size:13px;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:2px solid transparent;font-family:inherit}
+.nav-btn.active{color:var(--text);border-bottom:2px solid var(--text);font-weight:600}
+.nav-btn:hover:not(.active){color:var(--text)}
+.page{display:none;padding:1.25rem 1rem;max-width:680px;margin:0 auto}
+.page.active{display:block}
+.quick-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.quick-card h2{font-size:12px;font-weight:700;margin-bottom:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.type-toggle{display:flex;gap:6px;margin-bottom:1rem}
+.type-btn{flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:13px;font-family:inherit;font-weight:500}
+.type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.row.full{grid-template-columns:1fr}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+input,select{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);outline:none}
+input:focus,select:focus{border-color:var(--accent);background:#fff}
+.add-btn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.add-btn:hover{background:#333}
+.filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:var(--card);font-size:12px;cursor:pointer;font-family:inherit}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.entry-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.entry-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.entry-icon.expense{background:#fff0f0}
+.entry-icon.income{background:#f0fff4}
+.entry-icon.rental{background:#f0f4ff}
+.entry-main{flex:1;min-width:0}
+.entry-desc{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.entry-meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.03em}
+.tag.ded{background:#e8f5e9;color:#2d7d46}
+.tag.inc{background:#e0f2fe;color:#0277bd}
+.tag.rent{background:#ede7f6;color:#4527a0}
+.entry-amt{font-weight:700;font-size:15px;white-space:nowrap}
+.entry-amt.neg{color:var(--red)}
+.entry-amt.pos{color:var(--green)}
+.del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:2px 4px;flex-shrink:0;line-height:1}
+.del-btn:hover{color:var(--red)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.total-bar{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-around;margin-bottom:1rem}
+.total-bar-item{text-align:center}
+.total-bar-label{font-size:11px;color:var(--muted);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.total-bar-val{font-size:16px;font-weight:700}
+.month-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin:1rem 0 6px;padding:0 2px}
+.summary-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.s-card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-weight:600}
+.s-card-value{font-size:22px;font-weight:700}
+.s-card-value.neg{color:var(--red)}
+.s-card-value.pos{color:var(--green)}
+.section-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin:1.25rem 0 8px}
+.ato-table{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.ato-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.ato-row:last-child{border-bottom:none}
+.ato-row.total-row{font-weight:700;background:var(--bg)}
+.ato-label{color:var(--muted)}
+.ato-val{font-weight:600}
+.ato-val.neg{color:var(--red)}
+.ato-val.pos{color:var(--green)}
+.export-btns{display:flex;gap:8px;margin-top:1rem}
+.export-btn{flex:1;padding:11px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.export-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.export-btn.primary:hover{background:#333}
+.disclaimer{font-size:11px;color:var(--muted);margin-top:1rem;padding:10px 12px;border:1px solid var(--border);border-radius:8px;line-height:1.6}
+@media(max-width:480px){.row{grid-template-columns:1fr}.summary-cards{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div class="topbar">
+  <div class="logo">💰 Tax Diary</div>
+  <button class="nav-btn active" onclick="showPage('diary',this)">Daily Log</button>
+  <button class="nav-btn" onclick="showPage('rental',this)">Rental</button>
+  <button class="nav-btn" onclick="showPage('summary',this)">Tax Summary</button>
+</div>
 
-<div class="container">
-  <div class="header">
-    <h1>AUS_TAX_PREP // <span class="fy-badge" id="fy-label">FY 2024–25</span></h1>
-    <div class="sub">For PAYG employees with investment property</div>
-  </div>
-  <div class="disclaimer">⚠ This tool does not provide tax advice. It helps organise records for tax return preparation. Keep rental records for 5 years (ATO requirement).</div>
-
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('income',this)">PAYG Income</button>
-    <button class="tab" onclick="switchTab('rental',this)">Rental Property</button>
-    <button class="tab" onclick="switchTab('deductions',this)">Deductions</button>
-    <button class="tab" onclick="switchTab('summary',this)">Summary</button>
-  </div>
-
-  <!-- PAYG Panel -->
-  <div class="panel active" id="panel-income">
-    <div class="card">
-      <div class="field-row full"><div class="field"><label>Employer name</label><input id="emp-name" type="text" placeholder="e.g. Acme Pty Ltd"></div></div>
-      <div class="field-row">
-        <div class="field"><label>Gross income ($)</label><input id="emp-gross" type="number" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Tax withheld ($)</label><input id="emp-tax" type="number" placeholder="0.00" min="0" step="0.01"></div>
+<!-- DAILY LOG -->
+<div class="page active" id="page-diary">
+  <div class="quick-card">
+    <h2>Add Entry</h2>
+    <div class="type-toggle">
+      <button class="type-btn active" onclick="setType('expense',this)">💸 Expense</button>
+      <button class="type-btn" onclick="setType('income',this)">💵 Income</button>
+    </div>
+    <div class="row">
+      <div class="field"><label>Date</label><input type="date" id="e-date"></div>
+      <div class="field"><label>Amount ($)</label><input type="number" id="e-amt" placeholder="0.00" min="0" step="0.01"></div>
+    </div>
+    <div class="row full">
+      <div class="field"><label>Description</label><input type="text" id="e-desc" placeholder="e.g. Fuel for work trip"></div>
+    </div>
+    <div class="row" id="ato-row">
+      <div class="field"><label>Category</label>
+        <select id="e-cat">
+          <optgroup label="Work-related (Tax Deductible)">
+            <option value="D1_car">D1 — Work car / fuel</option>
+            <option value="D2_travel">D2 — Work travel</option>
+            <option value="D3_clothing">D3 — Uniform / clothing</option>
+            <option value="D4_education">D4 — Self education</option>
+            <option value="D5_other_work">D5 — Other work expense</option>
+            <option value="D8_donations">D8 — Donations (DGR)</option>
+            <option value="D9_tax_affairs">D9 — Tax agent / affairs</option>
+            <option value="D12_super">D12 — Personal super</option>
+          </optgroup>
+          <optgroup label="Personal (Not Deductible)">
+            <option value="personal_food">Food &amp; groceries</option>
+            <option value="personal_transport">Transport / Uber</option>
+            <option value="personal_shopping">Shopping</option>
+            <option value="personal_health">Health / medical</option>
+            <option value="personal_entertainment">Entertainment</option>
+            <option value="personal_bills">Bills / utilities</option>
+            <option value="personal_other">Other personal</option>
+          </optgroup>
+        </select>
       </div>
-      <div class="field-row">
-        <div class="field"><label>Super contributions ($)</label><input id="emp-super" type="number" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field" style="justify-content:flex-end;padding-top:18px"><button class="btn" onclick="addEmployer()">+ Add employer</button></div>
+      <div class="field"><label>Receipt ref</label><input type="text" id="e-ref" placeholder="optional"></div>
+    </div>
+    <div class="row full" id="income-cat-row" style="display:none">
+      <div class="field"><label>Income type</label>
+        <select id="e-income-cat">
+          <option value="salary">Salary / wages (PAYG)</option>
+          <option value="freelance">Freelance / ABN income</option>
+          <option value="interest">Interest / dividends</option>
+          <option value="other_income">Other income</option>
+        </select>
       </div>
     </div>
-    <div class="entry-list" id="emp-list"></div>
+    <div class="row full">
+      <div class="field"><label>Notes</label><input type="text" id="e-notes" placeholder="optional"></div>
+    </div>
+    <button class="add-btn" onclick="addEntry()">+ Add Entry</button>
   </div>
+  <div class="total-bar">
+    <div class="total-bar-item"><div class="total-bar-label">Expenses</div><div class="total-bar-val" style="color:var(--red)" id="tb-exp">$0.00</div></div>
+    <div class="total-bar-item"><div class="total-bar-label">Deductible</div><div class="total-bar-val" style="color:var(--green)" id="tb-ded">$0.00</div></div>
+    <div class="total-bar-item"><div class="total-bar-label">Income</div><div class="total-bar-val" style="color:var(--green)" id="tb-inc">$0.00</div></div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('deductible',this)">Tax deductible</button>
+    <button class="filter-btn" onclick="setFilter('income',this)">Income</button>
+    <button class="filter-btn" onclick="setFilter('personal',this)">Personal</button>
+  </div>
+  <div id="entries-list"></div>
+</div>
 
-  <!-- Rental Panel -->
-  <div class="panel" id="panel-rental">
-    <div class="card">
-      <div class="field-row full"><div class="field"><label>Property address</label><input id="prop-addr" type="text" placeholder="e.g. 42 Collins St, Melbourne VIC 3000"></div></div>
-      <div class="field-row">
-        <div class="field"><label>Gross rent received ($)</label><input id="prop-rent" type="number" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Loan interest ($)</label><input id="prop-interest" type="number" placeholder="0.00" min="0" step="0.01"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Agent fees ($)</label><input id="prop-agent" type="number" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Council rates ($)</label><input id="prop-rates" type="number" placeholder="0.00" min="0" step="0.01"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Insurance ($)</label><input id="prop-ins" type="number" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Repairs & maintenance ($)</label><input id="prop-repairs" type="number" placeholder="0.00" min="0" step="0.01"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Depreciation ($)</label><input id="prop-dep" type="number" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Other expenses ($)</label><input id="prop-other" type="number" placeholder="0.00" min="0" step="0.01"></div>
-      </div>
-      <button class="btn" onclick="addProperty()">+ Add property</button>
+<!-- RENTAL -->
+<div class="page" id="page-rental">
+  <div class="quick-card">
+    <h2>Add Rental Entry</h2>
+    <div class="type-toggle">
+      <button class="type-btn active" onclick="setRType('income',this)">🏠 Rent received</button>
+      <button class="type-btn" onclick="setRType('expense',this)">🔧 Property expense</button>
     </div>
-    <div class="entry-list" id="prop-list"></div>
+    <div class="row">
+      <div class="field"><label>Date</label><input type="date" id="r-date"></div>
+      <div class="field"><label>Amount ($)</label><input type="number" id="r-amt" placeholder="0.00" min="0" step="0.01"></div>
+    </div>
+    <div class="row full">
+      <div class="field"><label>Property address</label><input type="text" id="r-addr" placeholder="e.g. 42 Collins St, Melbourne"></div>
+    </div>
+    <div class="row" id="r-exp-row">
+      <div class="field"><label>ATO expense category</label>
+        <select id="r-cat">
+          <option value="interest_on_loans">Interest on loans</option>
+          <option value="property_agent_fees">Property agent fees</option>
+          <option value="council_rates">Council rates</option>
+          <option value="insurance">Insurance</option>
+          <option value="repairs_maintenance">Repairs &amp; maintenance</option>
+          <option value="depreciation">Depreciation</option>
+          <option value="water_charges">Water charges</option>
+          <option value="land_tax">Land tax</option>
+          <option value="advertising">Advertising</option>
+          <option value="body_corporate">Body corporate fees</option>
+          <option value="cleaning">Cleaning</option>
+          <option value="gardening">Gardening</option>
+          <option value="pest_control">Pest control</option>
+          <option value="other_rental">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Receipt / ref</label><input type="text" id="r-ref" placeholder="optional"></div>
+    </div>
+    <div class="row full">
+      <div class="field"><label>Notes</label><input type="text" id="r-notes" placeholder="optional"></div>
+    </div>
+    <button class="add-btn" onclick="addRental()">+ Add Rental Entry</button>
   </div>
+  <div class="total-bar">
+    <div class="total-bar-item"><div class="total-bar-label">Gross rent</div><div class="total-bar-val" style="color:var(--green)" id="r-inc">$0.00</div></div>
+    <div class="total-bar-item"><div class="total-bar-label">Expenses</div><div class="total-bar-val" style="color:var(--red)" id="r-exp">$0.00</div></div>
+    <div class="total-bar-item"><div class="total-bar-label">Net rental</div><div class="total-bar-val" id="r-net">$0.00</div></div>
+  </div>
+  <div id="rental-list"></div>
+</div>
 
-  <!-- Deductions Panel -->
-  <div class="panel" id="panel-deductions">
-    <div class="card">
-      <div class="field-row">
-        <div class="field">
-          <label>ATO label</label>
-          <select id="ded-label">
-            <option value="D1_work_related_car">D1 — Work-related car</option>
-            <option value="D2_work_related_travel">D2 — Work-related travel</option>
-            <option value="D3_clothing_laundry_dry_cleaning">D3 — Clothing/laundry</option>
-            <option value="D4_self_education">D4 — Self education</option>
-            <option value="D5_other_work_related">D5 — Other work-related</option>
-            <option value="D8_gifts_donations">D8 — Gifts/donations (DGR)</option>
-            <option value="D9_cost_of_managing_tax_affairs">D9 — Tax affairs</option>
-            <option value="D12_personal_super_contributions">D12 — Personal super</option>
-            <option value="D15_other_deductions">D15 — Other</option>
-          </select>
-        </div>
-        <div class="field"><label>Amount ($)</label><input id="ded-amt" type="number" placeholder="0.00" min="0" step="0.01"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Description</label><input id="ded-desc" type="text" placeholder="e.g. Home office — fixed rate method"></div>
-        <div class="field"><label>Receipt / reference</label><input id="ded-ref" type="text" placeholder="optional"></div>
-      </div>
-      <button class="btn" onclick="addDeduction()">+ Add deduction</button>
-    </div>
-    <div class="entry-list" id="ded-list"></div>
+<!-- TAX SUMMARY -->
+<div class="page" id="page-summary">
+  <div class="summary-cards" id="sum-cards"></div>
+  <div class="section-head">Work-related deductions (ATO D1–D15)</div>
+  <div class="ato-table" id="ded-table"></div>
+  <div class="section-head">Rental property (ATO Item 20)</div>
+  <div class="ato-table" id="rental-table"></div>
+  <div class="section-head">Income</div>
+  <div class="ato-table" id="income-table"></div>
+  <div class="export-btns">
+    <button class="export-btn primary" onclick="exportCSV()">↓ Export CSV for tax agent</button>
+    <button class="export-btn" onclick="exportJSON()">↓ Export JSON</button>
   </div>
-
-  <!-- Summary Panel -->
-  <div class="panel" id="panel-summary">
-    <div class="summary-grid" id="summary-cards"></div>
-    <div class="section-title">ATO Tax Return Fields</div>
-    <div class="card" id="ato-breakdown"></div>
-    <div class="export-row">
-      <button class="btn" onclick="exportJSON()">↓ Export JSON</button>
-      <button class="btn outline" onclick="exportCSV()">↓ Export CSV</button>
-    </div>
-    <div class="info-note">
-      ℹ ATO requires rental property records to be kept for <strong>5 years</strong> from lodgement date.<br>
-      Estimated taxable income shown here does not account for all offsets or levies.<br>
-      Consult a registered tax agent for advice on your specific situation.
-    </div>
-  </div>
+  <div class="disclaimer">⚠️ This tool does not provide tax advice. It helps organise records for tax return preparation. ATO requires records to be kept for 5 years. Consult a registered tax agent.</div>
 </div>
 
 <script>
-// Load from localStorage (persists across sessions)
-const state = {
-  employers: JSON.parse(localStorage.getItem('tp_employers') || '[]'),
-  properties: JSON.parse(localStorage.getItem('tp_properties') || '[]'),
-  deductions: JSON.parse(localStorage.getItem('tp_deductions') || '[]'),
+const ICONS={D1_car:'🚗',D2_travel:'✈️',D3_clothing:'👔',D4_education:'📚',D5_other_work:'💼',D8_donations:'❤️',D9_tax_affairs:'📋',D12_super:'🏦',personal_food:'🍔',personal_transport:'🚌',personal_shopping:'🛍️',personal_health:'💊',personal_entertainment:'🎬',personal_bills:'📱',personal_other:'📌',salary:'💵',freelance:'💻',interest:'📈',other_income:'💰'};
+const DEDUCTIBLE=['D1_car','D2_travel','D3_clothing','D4_education','D5_other_work','D8_donations','D9_tax_affairs','D12_super'];
+let entryType='expense', rentalType='income', activeFilter='all';
+const db={
+  entries:JSON.parse(localStorage.getItem('td_entries')||'[]'),
+  rental:JSON.parse(localStorage.getItem('td_rental')||'[]')
 };
+function save(){localStorage.setItem('td_entries',JSON.stringify(db.entries));localStorage.setItem('td_rental',JSON.stringify(db.rental));}
+function fmt(n){return '$'+Math.abs(parseFloat(n)||0).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function v(id){return document.getElementById(id).value;}
+function nv(id){return parseFloat(document.getElementById(id).value)||0;}
 
-function save() {
-  localStorage.setItem('tp_employers', JSON.stringify(state.employers));
-  localStorage.setItem('tp_properties', JSON.stringify(state.properties));
-  localStorage.setItem('tp_deductions', JSON.stringify(state.deductions));
-}
-
-function fmt(n) { return '$' + parseFloat(n||0).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-function v(id) { return document.getElementById(id).value; }
-function nv(id) { return parseFloat(document.getElementById(id).value)||0; }
-function clear(...ids) { ids.forEach(id => document.getElementById(id).value = ''); }
-
-function switchTab(t, btn) {
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + t).classList.add('active');
+function setType(t,btn){
+  entryType=t;
+  document.querySelectorAll('.type-toggle .type-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if (t === 'summary') renderSummary();
+  document.getElementById('ato-row').style.display=t==='expense'?'':'none';
+  document.getElementById('income-cat-row').style.display=t==='income'?'':'none';
 }
-
-function addEmployer() {
-  const name = v('emp-name');
-  if (!name) { alert('Please enter employer name'); return; }
-  state.employers.push({ employer: name, gross_income: nv('emp-gross'), tax_withheld: nv('emp-tax'), super_contributions: nv('emp-super'), added_at: new Date().toISOString() });
-  save(); clear('emp-name','emp-gross','emp-tax','emp-super'); renderEmployers();
+function setRType(t,btn){
+  rentalType=t;
+  document.querySelectorAll('#page-rental .type-toggle .type-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('r-exp-row').style.display=t==='expense'?'':'none';
 }
-
-function addProperty() {
-  const addr = v('prop-addr');
-  if (!addr) { alert('Please enter property address'); return; }
-  state.properties.push({
-    address: addr, gross_rent_received: nv('prop-rent'),
-    expenses: { interest_on_loans: nv('prop-interest'), property_agent_fees: nv('prop-agent'), council_rates: nv('prop-rates'), insurance: nv('prop-ins'), repairs_and_maintenance: nv('prop-repairs'), depreciation: nv('prop-dep'), other: nv('prop-other') },
-    added_at: new Date().toISOString()
-  });
-  save(); clear('prop-addr','prop-rent','prop-interest','prop-agent','prop-rates','prop-ins','prop-repairs','prop-dep','prop-other'); renderProperties();
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEntries();
 }
-
-function addDeduction() {
-  const desc = v('ded-desc');
-  const amt = nv('ded-amt');
-  if (!desc || !amt) { alert('Please enter description and amount'); return; }
-  state.deductions.push({ ato_label: v('ded-label'), description: desc, amount: amt, receipt_ref: v('ded-ref'), added_at: new Date().toISOString() });
-  save(); clear('ded-desc','ded-amt','ded-ref'); renderDeductions();
+function showPage(p,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  btn.classList.add('active');
+  if(p==='summary')renderSummary();
+  if(p==='rental')renderRental();
 }
-
-function del(key, idx) {
-  state[key].splice(idx,1); save();
-  if(key==='employers') renderEmployers();
-  if(key==='properties') renderProperties();
-  if(key==='deductions') renderDeductions();
+function initDates(){
+  const t=new Date().toISOString().split('T')[0];
+  document.getElementById('e-date').value=t;
+  document.getElementById('r-date').value=t;
 }
-
-function renderEmployers() {
-  const el = document.getElementById('emp-list');
-  if (!state.employers.length) { el.innerHTML = '<div class="empty">No employers added yet</div>'; return; }
-  el.innerHTML = state.employers.map((e,i) => `
-    <div class="entry">
-      <div><div class="entry-name">${e.employer}</div><div class="entry-sub">Tax withheld: ${fmt(e.tax_withheld)} &nbsp;·&nbsp; Super: ${fmt(e.super_contributions)}</div></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="entry-amt">${fmt(e.gross_income)}</span>
-        <button class="del-btn" onclick="del('employers',${i})">✕</button>
-      </div>
-    </div>`).join('');
+function addEntry(){
+  const desc=v('e-desc'),amt=nv('e-amt');
+  if(!desc||!amt){alert('Please enter description and amount');return;}
+  const cat=entryType==='income'?v('e-income-cat'):v('e-cat');
+  db.entries.push({id:Date.now(),type:entryType,date:v('e-date'),amount:amt,description:desc,category:cat,ref:v('e-ref'),notes:v('e-notes'),deductible:DEDUCTIBLE.includes(cat)});
+  save();
+  ['e-desc','e-amt','e-ref','e-notes'].forEach(id=>document.getElementById(id).value='');
+  renderEntries();updateTotals();
 }
+function addRental(){
+  const amt=nv('r-amt'),addr=v('r-addr');
+  if(!amt||!addr){alert('Please enter address and amount');return;}
+  db.rental.push({id:Date.now(),type:rentalType,date:v('r-date'),amount:amt,address:addr,category:rentalType==='expense'?v('r-cat'):'rental_income',ref:v('r-ref'),notes:v('r-notes')});
+  save();
+  ['r-amt','r-ref','r-notes'].forEach(id=>document.getElementById(id).value='');
+  renderRental();
+}
+function delEntry(id){db.entries=db.entries.filter(e=>e.id!==id);save();renderEntries();updateTotals();}
+function delRental(id){db.rental=db.rental.filter(e=>e.id!==id);save();renderRental();}
 
-function renderProperties() {
-  const el = document.getElementById('prop-list');
-  if (!state.properties.length) { el.innerHTML = '<div class="empty">No properties added yet</div>'; return; }
-  el.innerHTML = state.properties.map((p,i) => {
-    const exp = Object.values(p.expenses).reduce((a,b)=>a+b,0);
-    const net = p.gross_rent_received - exp;
-    return `<div class="entry">
-      <div><div class="entry-name">${p.address}</div><div class="entry-sub">Expenses: ${fmt(exp)} &nbsp;·&nbsp; Net: <span class="${net<0?'neg':''}">${fmt(net)}</span></div></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="entry-amt">${fmt(p.gross_rent_received)}</span>
-        <button class="del-btn" onclick="del('properties',${i})">✕</button>
-      </div>
-    </div>`;
+function renderEntries(){
+  const list=document.getElementById('entries-list');
+  let items=db.entries.filter(e=>{
+    if(activeFilter==='deductible')return e.deductible;
+    if(activeFilter==='income')return e.type==='income';
+    if(activeFilter==='personal')return e.type==='expense'&&!e.deductible;
+    return true;
+  }).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!items.length){list.innerHTML='<div class="empty-state"><div style="font-size:2rem;margin-bottom:8px">📝</div>No entries yet. Add your first one above!</div>';return;}
+  const groups={};
+  items.forEach(e=>{const m=e.date.slice(0,7);if(!groups[m])groups[m]=[];groups[m].push(e);});
+  list.innerHTML=Object.entries(groups).sort((a,b)=>b[0].localeCompare(a[0])).map(([m,es])=>{
+    const label=new Date(m+'-02').toLocaleDateString('en-AU',{month:'long',year:'numeric'});
+    return `<div class="month-label">${label}</div>`+es.map(e=>{
+      const isInc=e.type==='income';
+      const icon=ICONS[e.category]||(isInc?'💵':'💸');
+      const tags=e.deductible?'<span class="tag ded">Tax deductible</span>':isInc?'<span class="tag inc">Income</span>':'';
+      return `<div class="entry-item"><div class="entry-icon ${isInc?'income':'expense'}">${icon}</div><div class="entry-main"><div class="entry-desc">${e.description}</div><div class="entry-meta"><span>${e.date}</span><span>${e.category.replace(/_/g,' ')}</span>${e.ref?`<span>#${e.ref}</span>`:''}${tags}</div></div><span class="entry-amt ${isInc?'pos':'neg'}">${isInc?'+':'-'}${fmt(e.amount)}</span><button class="del-btn" onclick="delEntry(${e.id})">×</button></div>`;
+    }).join('');
   }).join('');
 }
 
-function renderDeductions() {
-  const el = document.getElementById('ded-list');
-  if (!state.deductions.length) { el.innerHTML = '<div class="empty">No deductions added yet</div>'; return; }
-  el.innerHTML = state.deductions.map((d,i) => `
-    <div class="entry">
-      <div><div class="entry-name">${d.description}</div><div class="entry-sub">${d.ato_label.replace(/_/g,' ')}${d.receipt_ref ? ' · ' + d.receipt_ref : ''}</div></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="entry-amt">${fmt(d.amount)}</span>
-        <button class="del-btn" onclick="del('deductions',${i})">✕</button>
-      </div>
-    </div>`).join('');
+function renderRental(){
+  const list=document.getElementById('rental-list');
+  if(!db.rental.length){list.innerHTML='<div class="empty-state"><div style="font-size:2rem;margin-bottom:8px">🏠</div>No rental entries yet</div>';}
+  else{
+    list.innerHTML=[...db.rental].sort((a,b)=>b.date.localeCompare(a.date)).map(e=>{
+      const isInc=e.type==='income';
+      return `<div class="entry-item"><div class="entry-icon rental">${isInc?'🏠':'🔧'}</div><div class="entry-main"><div class="entry-desc">${e.address}</div><div class="entry-meta"><span>${e.date}</span><span>${e.category.replace(/_/g,' ')}</span>${e.ref?`<span>#${e.ref}</span>`:''}<span class="tag rent">${isInc?'Rent in':'Property expense'}</span></div></div><span class="entry-amt ${isInc?'pos':'neg'}">${isInc?'+':'-'}${fmt(e.amount)}</span><button class="del-btn" onclick="delRental(${e.id})">×</button></div>`;
+    }).join('');
+  }
+  const grossRent=db.rental.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const totalExp=db.rental.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  const net=grossRent-totalExp;
+  document.getElementById('r-inc').textContent=fmt(grossRent);
+  document.getElementById('r-exp').textContent=fmt(totalExp);
+  const nel=document.getElementById('r-net');
+  nel.textContent=(net<0?'-':'')+fmt(net);
+  nel.style.color=net<0?'var(--red)':net>0?'var(--green)':'var(--text)';
 }
 
-function calcSummary() {
-  let grossSalary=0, taxWithheld=0, grossRent=0, totalExp=0, totalDed=0;
-  state.employers.forEach(e => { grossSalary+=e.gross_income; taxWithheld+=e.tax_withheld; });
-  state.properties.forEach(p => { grossRent+=p.gross_rent_received; totalExp+=Object.values(p.expenses).reduce((a,b)=>a+b,0); });
-  state.deductions.forEach(d => { totalDed+=d.amount; });
-  const netRental = grossRent - totalExp;
-  const estTaxable = grossSalary + netRental - totalDed;
-  return { grossSalary, taxWithheld, grossRent, totalExp, netRental, totalDed, estTaxable };
+function updateTotals(){
+  const exp=db.entries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  const ded=db.entries.filter(e=>e.deductible).reduce((s,e)=>s+e.amount,0);
+  const inc=db.entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  document.getElementById('tb-exp').textContent=fmt(exp);
+  document.getElementById('tb-ded').textContent=fmt(ded);
+  document.getElementById('tb-inc').textContent=fmt(inc);
 }
 
-function renderSummary() {
-  const s = calcSummary();
-  document.getElementById('summary-cards').innerHTML = [
-    ['Label 1 — Salary/wages', s.grossSalary, false],
-    ['Label 12 — Tax withheld', s.taxWithheld, false],
-    ['Item 20 — Net rental', s.netRental, s.netRental < 0],
-    ['Est. taxable income', s.estTaxable, s.estTaxable < 0],
-  ].map(([label,val,neg]) => `
-    <div class="metric">
-      <div class="metric-label">${label}</div>
-      <div class="metric-value${neg?' neg':''}">${fmt(val)}</div>
-    </div>`).join('');
+function renderSummary(){
+  const salary=db.entries.filter(e=>e.category==='salary').reduce((s,e)=>s+e.amount,0);
+  const otherInc=db.entries.filter(e=>e.type==='income'&&e.category!=='salary').reduce((s,e)=>s+e.amount,0);
+  const grossRent=db.rental.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const rentalExp=db.rental.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  const netRental=grossRent-rentalExp;
+  const totalDed=db.entries.filter(e=>e.deductible).reduce((s,e)=>s+e.amount,0);
+  const estTaxable=salary+otherInc+netRental-totalDed;
+  document.getElementById('sum-cards').innerHTML=[
+    ['Salary income',salary,false],['Total deductions',totalDed,false],
+    ['Net rental',netRental,netRental<0],['Est. taxable income',estTaxable,estTaxable<0]
+  ].map(([l,val,neg])=>`<div class="s-card"><div class="s-card-label">${l}</div><div class="s-card-value ${neg?'neg':''}">${neg?'-':''}${fmt(val)}</div></div>`).join('');
 
-  const dedByLabel = {};
-  state.deductions.forEach(d => { dedByLabel[d.ato_label] = (dedByLabel[d.ato_label]||0) + d.amount; });
+  const dedG={};
+  db.entries.filter(e=>e.deductible).forEach(e=>{dedG[e.category]=(dedG[e.category]||0)+e.amount;});
+  document.getElementById('ded-table').innerHTML=(Object.entries(dedG).map(([k,v])=>`<div class="ato-row"><span class="ato-label">${k.replace(/_/g,' ')}</span><span class="ato-val">${fmt(v)}</span></div>`).join('')||'<div class="ato-row"><span class="ato-label" style="color:#ccc">No deductions recorded</span><span></span></div>')+`<div class="ato-row total-row"><span>Total</span><span class="ato-val">${fmt(totalDed)}</span></div>`;
 
-  document.getElementById('ato-breakdown').innerHTML = `
-    <div class="ato-row"><span class="ato-key">IITR Label 1 — Salary or wages</span><span class="ato-val">${fmt(s.grossSalary)}</span></div>
-    <div class="ato-row"><span class="ato-key">IITR Label 12 — Total tax withheld</span><span class="ato-val">${fmt(s.taxWithheld)}</span></div>
-    <div class="ato-row"><span class="ato-key">Rental gross rent received</span><span class="ato-val">${fmt(s.grossRent)}</span></div>
-    <div class="ato-row"><span class="ato-key">Rental total allowable expenses</span><span class="ato-val">${fmt(s.totalExp)}</span></div>
-    <div class="ato-row"><span class="ato-key">Rental net income / (loss)</span><span class="ato-val${s.netRental<0?' neg':''}">${fmt(s.netRental)}</span></div>
-    <div class="ato-row"><span class="ato-key">Total deductions (D1–D15)</span><span class="ato-val">${fmt(s.totalDed)}</span></div>
-    ${Object.entries(dedByLabel).map(([k,v]) => `<div class="ato-row indent"><span class="ato-key">${k.replace(/_/g,' ')}</span><span class="ato-val">${fmt(v)}</span></div>`).join('')}
-    <div class="ato-row total"><span class="ato-key">Estimated taxable income</span><span class="ato-val${s.estTaxable<0?' neg':''}">${fmt(s.estTaxable)}</span></div>
-  `;
+  const rExpG={};
+  db.rental.filter(e=>e.type==='expense').forEach(e=>{rExpG[e.category]=(rExpG[e.category]||0)+e.amount;});
+  document.getElementById('rental-table').innerHTML=`<div class="ato-row"><span class="ato-label">Gross rent received</span><span class="ato-val pos">${fmt(grossRent)}</span></div>`+(Object.entries(rExpG).map(([k,v])=>`<div class="ato-row"><span class="ato-label">${k.replace(/_/g,' ')}</span><span class="ato-val neg">-${fmt(v)}</span></div>`).join(''))+`<div class="ato-row total-row"><span>Net rental income / (loss)</span><span class="ato-val ${netRental<0?'neg':''}">${netRental<0?'-':''}${fmt(netRental)}</span></div>`;
+
+  const incG={};
+  db.entries.filter(e=>e.type==='income').forEach(e=>{incG[e.category]=(incG[e.category]||0)+e.amount;});
+  document.getElementById('income-table').innerHTML=Object.entries(incG).map(([k,v])=>`<div class="ato-row"><span class="ato-label">${k.replace(/_/g,' ')}</span><span class="ato-val pos">${fmt(v)}</span></div>`).join('')||'<div class="ato-row"><span class="ato-label" style="color:#ccc">No income recorded</span><span></span></div>';
 }
 
-function exportJSON() {
-  const s = calcSummary();
-  const data = { financial_year: getFY(), generated_at: new Date().toISOString(), disclaimer: 'This tool does not provide tax advice.', employers: state.employers, properties: state.properties, deductions: state.deductions, summary: s };
-  download(JSON.stringify(data, null, 2), `tax_summary_${getFY()}.json`, 'application/json');
+function getFY(){const n=new Date();return n.getMonth()>=6?`${n.getFullYear()}-${String(n.getFullYear()+1).slice(-2)}`:`${n.getFullYear()-1}-${String(n.getFullYear()).slice(-2)}`;}
+function exportCSV(){
+  const rows=[['Date','Type','Description','Category','Deductible','Amount','Receipt','Notes']];
+  db.entries.forEach(e=>rows.push([e.date,e.type,e.description,e.category,e.deductible?'Yes':'No',e.amount,e.ref||'',e.notes||'']));
+  rows.push([]);rows.push(['--- RENTAL ENTRIES ---']);
+  rows.push(['Date','Type','Address','Category','Amount','Receipt','Notes']);
+  db.rental.forEach(e=>rows.push([e.date,e.type,e.address,e.category,e.amount,e.ref||'',e.notes||'']));
+  dl(rows.map(r=>r.map(x=>`"${x}"`).join(',')).join('\n'),`tax_diary_${getFY()}.csv`,'text/csv');
 }
+function exportJSON(){dl(JSON.stringify({financial_year:getFY(),generated:new Date().toISOString(),disclaimer:'This tool does not provide tax advice.',entries:db.entries,rental:db.rental},null,2),`tax_diary_${getFY()}.json`,'application/json');}
+function dl(content,filename,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=filename;a.click();}
 
-function exportCSV() {
-  const s = calcSummary();
-  const rows = [['Field','Value'],['Financial year',getFY()],['Salary wages',s.grossSalary],['Tax withheld',s.taxWithheld],['Gross rent',s.grossRent],['Rental expenses',s.totalExp],['Net rental',s.netRental],['Total deductions',s.totalDed],['Estimated taxable income',s.estTaxable]];
-  download(rows.map(r=>r.join(',')).join('\n'), `tax_summary_${getFY()}.csv`, 'text/csv');
-}
-
-function download(content, filename, type) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([content], {type}));
-  a.download = filename; a.click();
-}
-
-function getFY() {
-  const now = new Date();
-  return now.getMonth() >= 6 ? `${now.getFullYear()}-${String(now.getFullYear()+1).slice(-2)}` : `${now.getFullYear()-1}-${String(now.getFullYear()).slice(-2)}`;
-}
-
-function setFY() {
-  const now = new Date();
-  const fy = now.getMonth() >= 6 ? `FY ${now.getFullYear()}–${String(now.getFullYear()+1).slice(-2)}` : `FY ${now.getFullYear()-1}–${String(now.getFullYear()).slice(-2)}`;
-  document.getElementById('fy-label').textContent = fy;
-}
-
-setFY();
-renderEmployers(); renderProperties(); renderDeductions();
+initDates();renderEntries();renderRental();updateTotals();
 </script>
 </body>
 </html>
